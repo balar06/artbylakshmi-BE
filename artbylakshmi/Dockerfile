@@ -1,7 +1,7 @@
-# Use the official Maven image (no OpenJDK)
-FROM maven:3.8.6-slim AS build
+# Use the official Maven image (latest) as the base
+FROM maven:latest AS build
 
-# Install OpenJDK 17 in the container
+# Install OpenJDK 17
 RUN apt-get update && apt-get install -y openjdk-17-jdk
 
 # Set the working directory in the container
