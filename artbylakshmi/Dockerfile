@@ -1,5 +1,5 @@
-# Use an official Maven image to build and run the application
-FROM maven:3.8.6-openjdk-17-slim AS build
+# Use an official Maven image with OpenJDK 17
+FROM maven:3.8.6-openjdk-17 AS build
 
 # Set the working directory in the container
 WORKDIR /app
@@ -29,4 +29,4 @@ COPY --from=build /app /app
 EXPOSE 8080
 
 # Command to run the application using Maven
-CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.profiles=prod"]
+CMD ["mvn", "spring-boot:run"]
