@@ -1,9 +1,6 @@
 # Use the official Maven image (latest) as the base
 FROM maven:latest AS build
 
-# Install OpenJDK 17
-RUN apt-get update && apt-get install -y openjdk-17-jdk
-
 # Set the working directory in the container
 WORKDIR /app
 
@@ -16,8 +13,8 @@ RUN mvn dependency:go-offline
 # Copy the entire project into the container
 COPY . .
 
-# Build the application (without packaging it, just to make sure everything is set up)
-RUN mvn clean install -DskipTests
+# Build the application and package it into a JAR file (without skipping tests)
+RUN mvn clean package -DskipTests
 
 # Use OpenJDK 17 runtime to run the Spring Boot application
 FROM openjdk:17-jdk-slim
@@ -25,11 +22,11 @@ FROM openjdk:17-jdk-slim
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the entire project into the container
-COPY --from=build /app /app
+# Copy the packaged JAR file from the build stage into the final image
+COPY --from=build /app/target/*.jar app.jar
 
 # Expose the application port (default Spring Boot port)
 EXPOSE 8080
 
-# Command to run the application using Maven
-CMD ["mvn", "spring-boot:run"]
+# Command to run the Spring Boot application using the JAR file
+CMD ["java", "-jar", "app.jar"]
